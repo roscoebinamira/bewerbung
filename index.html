@@ -467,19 +467,18 @@
       background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
       transform-origin: left;
       transform: scaleX(0);
-      transition: transform 1s ease;
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes fillBar {
-      from { transform: scaleX(var(--grade-fill)); }
-      to { transform: scaleX(var(--grade-fill)); }
+    .grade-row.is-visible .fill {
+      transform: scaleX(var(--grade-fill));
     }
 
-    @supports not (animation-timeline: view()) {
-      .fill { transform: scaleX(var(--grade-fill)); animation: none; }
-    }
-    @supports not (animation-timeline: view()) {
-      .fill { animation: none; width: calc(var(--grade) / 6 * 100%); }
+    @media (prefers-reduced-motion: reduce) {
+      .fill {
+        transition: none;
+        transform: scaleX(var(--grade-fill));
+      }
     }
 
     .delay-1 { animation-delay: 0.08s; }
@@ -548,6 +547,15 @@
   </style>
 </head>
 <body>
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.grade-row').forEach(row => observer.observe(row));
+  </script>
   
   <a class="skip-link" href="#content">Zum Inhalt springen</a>
 
